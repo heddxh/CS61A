@@ -17,12 +17,13 @@ would be read to the value, where possible.
 
 from __future__ import print_function  # Python 2 compatibility
 
-import numbers
 import builtins
+import numbers
+import re
 
-from ucb import main, trace, interact
-from scheme_tokens import tokenize_lines, DELIMITERS
 from buffer import Buffer, InputReader, LineReader
+from scheme_tokens import DELIMITERS, tokenize_lines
+from ucb import interact, main, trace
 
 # Pairs and Scheme lists
 
@@ -38,7 +39,7 @@ class Pair(object):
     (5 6)
     """
     def __init__(self, first, rest):
-        from scheme_builtins import scheme_valid_cdrp, SchemeError
+        from scheme_builtins import SchemeError, scheme_valid_cdrp
         if not (rest is nil or isinstance(rest, Pair) or type(rest).__name__ == 'Promise'):
             print(rest, type(rest).__name__)
             raise SchemeError("cdr can only be a pair, nil, or a promise but was {}".format(rest))
@@ -131,11 +132,11 @@ def scheme_read(src):
     val = src.pop_first() # Get and remove the first token
     if val == 'nil':
         # BEGIN PROBLEM 1
-        "*** YOUR CODE HERE ***"
+        return nil
         # END PROBLEM 1
     elif val == '(':
         # BEGIN PROBLEM 1
-        "*** YOUR CODE HERE ***"
+        return read_tail(src)
         # END PROBLEM 1
     elif val == "'":
         # BEGIN PROBLEM 6
@@ -158,11 +159,19 @@ def read_tail(src):
             raise SyntaxError('unexpected end of file')
         elif src.current() == ')':
             # BEGIN PROBLEM 1
-            "*** YOUR CODE HERE ***"
+            src.pop_first() # consuming the last )
+            return nil
             # END PROBLEM 1
         else:
             # BEGIN PROBLEM 1
-            "*** YOUR CODE HERE ***"
+            first = scheme_read(src)
+            result = Pair(first, nil)
+            w_rest = result
+            while src.current() != ")": # the next token is not ), continue reading
+                w_rest.rest = Pair(scheme_read(src), nil)
+                w_rest = w_rest.rest
+            src.pop_first() # consuming the last )
+            return result
             # END PROBLEM 1
     except EOFError:
         raise SyntaxError('unexpected end of file')
