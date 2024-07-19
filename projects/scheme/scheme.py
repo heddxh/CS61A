@@ -1,7 +1,7 @@
 """A Scheme interpreter and its read-eval-print loop."""
 
-from re import S
 import sys
+from re import S
 
 from scheme_builtins import *
 from scheme_reader import *
@@ -12,7 +12,7 @@ from ucb import main
 ##############
 
 
-def scheme_eval(expr, env, _=None):  # Optional third argument is ignored
+def scheme_eval(expr, env: "Frame", _=None):  # Optional third argument is ignored
     """Evaluate Scheme expression EXPR in environment ENV.
 
     >>> expr = read_line('(+ 2 2)')
@@ -35,12 +35,15 @@ def scheme_eval(expr, env, _=None):  # Optional third argument is ignored
         return SPECIAL_FORMS[first](rest, env)
     else:
         # BEGIN PROBLEM 4
-        "*** YOUR CODE HERE ***"
+        operator = scheme_eval(first, env)
+        def eval_args(expr):
+            return scheme_eval(expr, env)
+        return scheme_apply(operator, rest.map(eval_args), env)
         # END PROBLEM 4
 
 
 def self_evaluating(expr):
-    """Return whether EXPR evaluates to itself."""
+    """Return whether EXPR evaluate sto itself."""
     return (scheme_atomp(expr) and not scheme_symbolp(expr)) or expr is None
 
 
@@ -506,7 +509,7 @@ def validate_formals(formals):
         formals = formals.rest
 
 
-def validate_procedure(procedure):
+def validate_procedure(procedure: Procedure):
     """Check that PROCEDURE is a valid Scheme procedure."""
     if not scheme_procedurep(procedure):
         raise SchemeError(
