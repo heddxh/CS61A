@@ -121,7 +121,7 @@ class Frame:
         # END PROBLEM 2
         raise SchemeError(f"unknown identifier: {symbol}")
 
-    def make_child_frame(self, formals, vals):
+    def make_child_frame(self, formals: Pair | type(nil), vals: Pair | type(nil)):
         """Return a new local frame whose parent is SELF, in which the symbols
         in a Scheme list of formal parameters FORMALS are bound to the Scheme
         values in the Scheme list VALS. Raise an error if too many or too few
@@ -135,7 +135,17 @@ class Frame:
         if len(formals) != len(vals):
             raise SchemeError("Incorrect number of arguments to function call")
         # BEGIN PROBLEM 10
-        "*** YOUR CODE HERE ***"
+        if formals is nil:
+            return Frame(parent=self)
+
+        child_frame = Frame(parent=self)
+        f, v = formals.rest, vals.rest
+        print("Debug:", f)
+        child_frame.define(formals.first, vals.first)
+        while f is not nil:
+            child_frame.define(f.first, v.first)
+            f, v = f.rest, v.rest
+        return child_frame
         # END PROBLEM 10
 
 
