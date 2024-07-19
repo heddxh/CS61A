@@ -1,5 +1,6 @@
 """A Scheme interpreter and its read-eval-print loop."""
 
+from math import exp
 import sys
 from re import S
 
@@ -316,7 +317,7 @@ def do_lambda_form(expressions, env):
     formals = expressions.first
     validate_formals(formals)
     # BEGIN PROBLEM 8
-    "*** YOUR CODE HERE ***"
+    return LambdaProcedure(formals, expressions.rest, env)
     # END PROBLEM 8
 
 
