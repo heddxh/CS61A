@@ -58,7 +58,7 @@ def scheme_apply(procedure, args, env):
         return eval_all(procedure.body, new_env)
 
 
-def eval_all(expressions, env):
+def eval_all(expressions: Pair | type(nil), env: "Frame"):
     """Evaluate each expression in the Scheme list EXPRESSIONS in
     environment ENV and return the value of the last.
 
@@ -74,7 +74,14 @@ def eval_all(expressions, env):
     2
     """
     # BEGIN PROBLEM 7
-    return scheme_eval(expressions.first, env)  # replace this with lines of your own code
+    if expressions is nil:
+        return None
+    result = scheme_eval(expressions.first, env)
+    next_expr = expressions.rest
+    while next_expr is not nil:
+        result = scheme_eval(next_expr.first, env)
+        next_expr = next_expr.rest
+    return result
     # END PROBLEM 7
 
 
@@ -185,7 +192,7 @@ class BuiltinProcedure(Procedure):
 class LambdaProcedure(Procedure):
     """A procedure defined by a lambda expression or a define form."""
 
-    def __init__(self, formals, body, env):
+    def __init__(self, formals: Pair, body: Pair, env: Frame):
         """A procedure with formal parameter list FORMALS (a Scheme list),
         whose body is the Scheme list BODY, and whose parent environment
         starts with Frame ENV."""
