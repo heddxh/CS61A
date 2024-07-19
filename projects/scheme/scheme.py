@@ -237,7 +237,7 @@ def add_builtins(frame, funcs_and_names):
 # the environment in which the form is to be evaluated.
 
 
-def do_define_form(expressions, env):
+def do_define_form(expressions: Pair, env: Frame):
     """Evaluate a define form.
     >>> env = create_global_frame()
     >>> do_define_form(read_line("(x 2)"), env)
@@ -260,7 +260,8 @@ def do_define_form(expressions, env):
     if scheme_symbolp(target):
         validate_form(expressions, 2, 2)  # Checks that expressions is a list of length exactly 2
         # BEGIN PROBLEM 5
-        "*** YOUR CODE HERE ***"
+        env.define(target, scheme_eval(expressions.rest.first, env))
+        return target
         # END PROBLEM 5
     elif isinstance(target, Pair) and scheme_symbolp(target.first):
         # BEGIN PROBLEM 9
