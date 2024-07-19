@@ -1,5 +1,6 @@
 """A Scheme interpreter and its read-eval-print loop."""
 
+from re import S
 import sys
 
 from scheme_builtins import *
@@ -96,13 +97,16 @@ class Frame:
     def define(self, symbol, value):
         """Define Scheme SYMBOL to have VALUE."""
         # BEGIN PROBLEM 2
-        "*** YOUR CODE HERE ***"
+        self.bindings[symbol] = value
         # END PROBLEM 2
 
     def lookup(self, symbol):
         """Return the value bound to SYMBOL. Errors if SYMBOL is not found."""
         # BEGIN PROBLEM 2
-        "*** YOUR CODE HERE ***"
+        if symbol in self.bindings:
+            return self.bindings[symbol]
+        elif self.parent:
+            return self.parent.lookup(symbol)
         # END PROBLEM 2
         raise SchemeError(f"unknown identifier: {symbol}")
 
@@ -148,7 +152,7 @@ class BuiltinProcedure(Procedure):
     def __str__(self):
         return f"#[{self.name}]"
 
-    def apply(self, args, env):
+    def apply(self, args: Pair, env):
         """Apply SELF to ARGS in ENV, where ARGS is a Scheme list (a Pair instance).
 
         >>> env = create_global_frame()
@@ -162,7 +166,12 @@ class BuiltinProcedure(Procedure):
         # Convert a Scheme list to a Python list
         python_args = []
         # BEGIN PROBLEM 3
-        "*** YOUR CODE HERE ***"
+        w_args = args
+        while w_args is not nil:
+            python_args.append(w_args.first)
+            w_args = w_args.rest
+        if self.use_env:
+            python_args.append(env)
         # END PROBLEM 3
         try:
             return self.fn(*python_args)
