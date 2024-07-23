@@ -2,7 +2,7 @@
 
 import sys
 from math import exp
-from re import S
+from re import S, T
 
 from scheme_builtins import *
 from scheme_reader import *
@@ -362,7 +362,16 @@ def do_and_form(expressions, env):
     False
     """
     # BEGIN PROBLEM 12
-    "*** YOUR CODE HERE ***"
+    if expressions is nil:
+        return True
+    if expressions.rest is nil and is_true_primitive(result := scheme_eval(expressions.first, env)):
+        return result
+    if is_false_primitive(scheme_eval(expressions.first, env)):
+        return False
+    if is_false_primitive(result := do_and_form(expressions.rest, env)):
+        return False
+    else:
+        return result
     # END PROBLEM 12
 
 
@@ -380,7 +389,16 @@ def do_or_form(expressions, env):
     6
     """
     # BEGIN PROBLEM 12
-    "*** YOUR CODE HERE ***"
+    if expressions is nil:
+        return False
+    if expressions.rest is nil and is_false_primitive(result := scheme_eval(expressions.first, env)):
+        return False
+    if is_true_primitive(result := scheme_eval(expressions.first, env)):
+        return result
+    if is_true_primitive(result := do_or_form(expressions.rest, env)):
+        return result
+    else:
+        return False
     # END PROBLEM 12
 
 
